@@ -113,6 +113,13 @@ app.whenReady().then(() => {
 - 默认「思考模式=开启」会消耗推理 token（按输出计费），对成本敏感可在插件页设为「关闭」。
 - 若直接运行原始 `neopot.appimage` 而不走 `AppRun`，同样需要自行加上 `--password-store=gnome-libsecret`。
 
+## 来源与致谢
+
+本插件的部分代码与提示词派生自以下 GPL-3.0 项目，因此整体以 GPL-3.0 发布：
+
+- [shirumesu/Neopot-releases](https://github.com/shirumesu/Neopot-releases)（GPL-3.0）— `main.js` 的辅助函数与插件结构、`info.json` 字段。
+- [Tzulao55/pot-app-translate-plugin-deepseek](https://github.com/Tzulao55/pot-app-translate-plugin-deepseek)（GPL-3.0）— 系统提示词。
+
 ## 备注
 
 - 本仓库不包含任何 API Key。
@@ -120,4 +127,4 @@ app.whenReady().then(() => {
 
 ## License
 
-MIT
+GPL-3.0（全文见 [LICENSE](LICENSE)）。

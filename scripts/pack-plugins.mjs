@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'

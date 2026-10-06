@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // DeepSeek Translate — NeoPot translate plugin
 // Uses the DeepSeek OpenAI-compatible Chat Completions API.
 // The model is fixed to "deepseek-flash" (DeepSeek routes its model requests to V4.1),
