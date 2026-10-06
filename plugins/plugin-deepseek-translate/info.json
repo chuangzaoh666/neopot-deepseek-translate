@@ -1,10 +1,10 @@
 {
   "plugin_type": "translate",
   "name": "plugin-deepseek-translate",
-  "display": "DeepSeek Translate",
-  "version": "0.1.0",
+  "display": "DeepSeek 翻译",
+  "version": "0.2.0",
   "author": "chuangzaoh666",
-  "description": "Translate text with the DeepSeek OpenAI-compatible Chat Completions API (DeepSeek V4.1 Flash / deepseek-flash), with configurable thinking mode.",
+  "description": "使用 DeepSeek 官方 OpenAI 兼容接口进行翻译，只输出译文。模型固定为 deepseek-flash。",
   "icon": "icon.svg",
   "homepage": "https://api-docs.deepseek.com/guides/thinking_mode/",
   "language": {
@@ -40,66 +40,55 @@
   "needs": [
     {
       "key": "apiKey",
-      "display": "API Key",
-      "type": "input"
-    },
-    {
-      "key": "model",
-      "display": "Model",
+      "display": "API 密钥",
       "type": "input"
     },
     {
       "key": "prompt",
-      "display": "Prompt",
+      "display": "提示词",
       "type": "input"
     },
     {
       "key": "extraArguments",
-      "display": "Extra JSON Arguments",
+      "display": "额外 JSON 参数",
       "type": "input"
     }
   ],
   "options": [
     {
       "key": "baseUrl",
-      "display": "Base URL",
+      "display": "接口地址",
       "type": "input",
       "default": "https://api.deepseek.com/chat/completions"
     },
     {
-      "key": "defaultModel",
-      "display": "Default Model",
-      "type": "input",
-      "default": "deepseek-flash"
-    },
-    {
       "key": "thinking",
-      "display": "Thinking Mode",
+      "display": "思考模式",
       "type": "select",
       "default": "default",
       "options": {
-        "default": "Default",
-        "enabled": "Enabled",
-        "disabled": "Disabled"
+        "default": "默认",
+        "enabled": "开启",
+        "disabled": "关闭"
       }
     },
     {
       "key": "reasoningEffort",
-      "display": "Reasoning Effort",
+      "display": "推理强度",
       "type": "select",
       "default": "default",
       "options": {
-        "default": "Default",
-        "low": "low",
-        "high": "high",
-        "max": "max"
+        "default": "默认",
+        "low": "低",
+        "high": "高",
+        "max": "最高"
       }
     }
   ],
   "hotkeys": [
     {
       "key": "open_homepage",
-      "display": "Open Homepage",
+      "display": "打开主页",
       "default": "",
       "handler": "openHomepage"
     }

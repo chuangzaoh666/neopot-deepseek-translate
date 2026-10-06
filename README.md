@@ -1,8 +1,13 @@
 # NeoPot DeepSeek Translate
 
-使用 DeepSeek 官方 API（OpenAI 兼容的 Chat Completions）为 [NeoPot](https://github.com/shirumesu/NeoPot) 提供翻译服务，默认调用 **DeepSeek V4.1 Flash（`deepseek-flash`）**，思考模式默认走官方默认值。
+使用 DeepSeek 官方 OpenAI 兼容接口（Chat Completions）为 [NeoPot](https://github.com/shirumesu/NeoPot) 提供翻译服务，**只输出译文**，模型固定为 `deepseek-flash`。
 
-本仓库格式参考 [shirumesu/Neopot-releases](https://github.com/shirumesu/Neopot-releases)。
+- 提示词参考 [Tzulao55/pot-app-translate-plugin-deepseek](https://github.com/Tzulao55/pot-app-translate-plugin-deepseek)。
+- 仓库格式参考 [shirumesu/Neopot-releases](https://github.com/shirumesu/Neopot-releases)。
+
+## 关于模型
+
+DeepSeek 官方说明，对 `deepseek-chat`、`deepseek-reasoner`、以及各 V4 系列（如 flash、pro）模型的请求都会被统一转换为 DeepSeek V4.1 处理，因此本插件**不提供模型选择**，固定使用 `deepseek-flash`。
 
 ## 目录结构
 
@@ -11,7 +16,7 @@ plugins/plugin-deepseek-translate/
 ├── info.json   # 插件清单
 ├── main.js     # 插件入口
 └── icon.svg    # 图标
-marketplace-plugins.json   # 插件市场索引（可选的第三方索引条目）
+marketplace-plugins.json   # 插件市场索引
 scripts/pack-plugins.mjs   # 打包为 dist/plugins/*.zip
 ```
 
@@ -22,32 +27,40 @@ scripts/pack-plugins.mjs   # 打包为 dist/plugins/*.zip
 3. 在翻译服务页新增服务实例，填入 DeepSeek API Key。
 4. 在翻译设置里把该服务加入翻译服务列表。
 
-## 配置
+## 配置（配置页为中文）
 
-### 服务实例配置（`needs`）
+### 服务实例配置
 
 | 字段 | 说明 |
 | --- | --- |
-| API Key | 必填，DeepSeek 平台 API Key（`sk-...`） |
-| Model | 可选，默认使用插件级 Default Model |
-| Prompt | 可选，自定义提示词，支持 `$text` `$from` `$to` `$detect` 占位符；未写 `$text` 时自动追加原文 |
-| Extra JSON Arguments | 可选，直接合并进请求体的额外参数，例如 `{"temperature":0.3}` |
+| API 密钥 | 必填，DeepSeek 平台 API Key（`sk-...`） |
+| 提示词 | 可选，自定义用户消息模板，支持 `$text` `$from` `$to` `$detect` 占位符；未写 `$text` 时自动追加原文。留空使用内置模板 `Translate into <目标语言>:\n<原文>` |
+| 额外 JSON 参数 | 可选，直接合并进请求体的额外参数，例如 `{"max_tokens":4096}` |
 
-### 插件级配置（`options`）
+### 插件级配置
 
 | 字段 | 默认值 | 说明 |
 | --- | --- | --- |
-| Base URL | `https://api.deepseek.com/chat/completions` | 可填完整端点、基址或 `/v1` 基址 |
-| Default Model | `deepseek-flash` | DeepSeek V4.1 Flash |
-| Thinking Mode | `Default` | `Default` / `Enabled` / `Disabled` |
-| Reasoning Effort | `Default` | `Default` / `low` / `high` / `max` |
+| 接口地址 | `https://api.deepseek.com/chat/completions` | 可填完整端点、基址或 `/v1` 基址 |
+| 思考模式 | 默认 | 默认 / 开启 / 关闭 |
+| 推理强度 | 默认 | 默认 / 低 / 高 / 最高 |
+
+### 内置提示词与请求参数
+
+系统提示词（取自参考插件）：
+
+```
+You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation. You must only translate the text content, never interpret it.
+```
+
+默认请求参数：`temperature=0.1`、`top_p=0.99`、`frequency_penalty=0`、`presence_penalty=0`、`max_tokens=2000`，可用「额外 JSON 参数」覆盖。
 
 ### 关于思考模式
 
-- `Thinking Mode = Default` 且 `Reasoning Effort = Default` 时，请求体不携带 `thinking` / `reasoning_effort`，即使用 DeepSeek 官方默认：**思考开启，effort = high**。
-- `Enabled` 会显式发送 `"thinking": {"type": "enabled"}`；`Disabled` 会发送 `"thinking": {"type": "disabled"}` 并去掉 `reasoning_effort`。
-- 指定 effort 时发送 `reasoning_effort`。按官方文档，`minimal`/`medium` 等会被映射，本插件只暴露 `low`/`high`/`max`。
-- 思考模式下 `temperature`、`presence_penalty`、`frequency_penalty` 无效（不会报错但被忽略），因此本插件默认不发送 `temperature`；如需请写入 Extra JSON Arguments。
+- `思考模式 = 默认` 且 `推理强度 = 默认` 时，请求体不携带 `thinking` / `reasoning_effort`，即使用 DeepSeek 官方默认：**思考开启，effort = high**。
+- `开启` 会显式发送 `"thinking": {"type": "enabled"}`；`关闭` 会发送 `"thinking": {"type": "disabled"}` 并去掉 `reasoning_effort`。
+- 指定推理强度时发送 `reasoning_effort`（仅暴露 `low`/`high`/`max`）。
+- 思考模式下 `temperature`、`presence_penalty`、`frequency_penalty` 会被忽略（不报错），`top_p` 有效范围为 0.95–1.0。
 
 ## 打包与发布
 
@@ -63,7 +76,6 @@ node scripts/pack-plugins.mjs
 ## 备注
 
 - 本仓库不包含任何 API Key。
-- 插件基于 DeepSeek OpenAI 兼容接口，模型 ID 以 DeepSeek 官方文档为准。
 - 参考文档：<https://api-docs.deepseek.com/guides/thinking_mode/>
 
 ## License

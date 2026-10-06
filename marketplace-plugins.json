@@ -3,10 +3,10 @@
     "id": "translate:plugin-deepseek-translate",
     "type": "translate",
     "name": "plugin-deepseek-translate",
-    "display": "DeepSeek Translate",
-    "version": "0.1.0",
+    "display": "DeepSeek 翻译",
+    "version": "0.2.0",
     "author": "chuangzaoh666",
-    "description": "Translate text with the DeepSeek OpenAI-compatible Chat Completions API (DeepSeek V4.1 Flash), with configurable thinking mode.",
+    "description": "使用 DeepSeek 官方 OpenAI 兼容接口进行翻译，只输出译文。模型固定为 deepseek-flash。",
     "repo": "https://github.com/chuangzaoh666/neopot-deepseek-translate",
     "download": "https://github.com/chuangzaoh666/neopot-deepseek-translate/releases/download/plugins/plugin-deepseek-translate.zip"
   }

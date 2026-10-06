@@ -1,7 +1,8 @@
 // DeepSeek Translate — NeoPot translate plugin
 // Uses the DeepSeek OpenAI-compatible Chat Completions API.
-// Defaults: model "deepseek-flash" (DeepSeek V4.1 Flash), thinking mode left at the
-// provider default (thinking enabled, reasoning effort "high").
+// The model is fixed to "deepseek-flash" (DeepSeek routes its model requests to V4.1),
+// so there is no model selection in the config page.
+// Thinking mode is left at the provider default (thinking enabled, reasoning effort "high").
 
 function getConfig(options) {
   return options && options.config ? options.config : {};
@@ -12,7 +13,7 @@ function getPluginOptions(options) {
 }
 
 function requireValue(value, label) {
-  if (value === undefined || value === null || String(value).trim() === '') throw new Error('Please configure ' + label + '.');
+  if (value === undefined || value === null || String(value).trim() === '') throw new Error('请先配置 ' + label + '。');
   return String(value);
 }
 
@@ -77,13 +78,19 @@ function stripQuotedResult(value) {
   return text.trim();
 }
 
-const DEFAULT_SYSTEM_PROMPT = 'You are a professional translation engine. Translate the user text into $to. Return only the translated text, without explanations or quotes.';
+// Fixed model: DeepSeek routes model requests to V4.1.
+const MODEL = 'deepseek-flash';
+
+// Prompt from Tzulao55/pot-app-translate-plugin-deepseek: translate only, never interpret.
+const DEFAULT_SYSTEM_PROMPT = 'You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation. You must only translate the text content, never interpret it.';
 
 function buildMessages(text, from, to, detect, customPrompt) {
   const source = !from || from === 'auto' ? (detect || 'auto') : from;
-  const system = DEFAULT_SYSTEM_PROMPT.replaceAll('$to', to || '');
+  const system = DEFAULT_SYSTEM_PROMPT;
   const template = customPrompt && String(customPrompt).trim() ? String(customPrompt) : '';
-  if (!template) return [{ role: 'system', content: system }, { role: 'user', content: text }];
+  if (!template) {
+    return [{ role: 'system', content: system }, { role: 'user', content: 'Translate into ' + (to || '') + ':\n' + text }];
+  }
   let user = template
     .replaceAll('$text', text)
     .replaceAll('$from', source)
@@ -107,13 +114,17 @@ function applyThinking(payload, pluginOptions) {
 async function translate(text, from, to, options = {}) {
   const config = getConfig(options);
   const pluginOptions = getPluginOptions(options);
-  const apiKey = requireValue(config.apiKey, 'API Key');
-  const model = String(config.model || pluginOptions.defaultModel || 'deepseek-flash');
+  const apiKey = requireValue(config.apiKey, 'API 密钥');
   const endpoint = resolveEndpoint(pluginOptions.baseUrl);
   const payload = Object.assign({
-    model: model,
+    model: MODEL,
     messages: buildMessages(text, from, to, options.detect, config.prompt),
     stream: false,
+    temperature: 0.1,
+    top_p: 0.99,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    max_tokens: 2000,
   }, parseMaybeJson(config.extraArguments, {}));
   applyThinking(payload, pluginOptions);
 
