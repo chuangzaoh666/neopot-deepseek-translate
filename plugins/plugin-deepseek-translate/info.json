@@ -1,0 +1,107 @@
+{
+  "plugin_type": "translate",
+  "name": "plugin-deepseek-translate",
+  "display": "DeepSeek Translate",
+  "version": "0.1.0",
+  "author": "chuangzaoh666",
+  "description": "Translate text with the DeepSeek OpenAI-compatible Chat Completions API (DeepSeek V4.1 Flash / deepseek-flash), with configurable thinking mode.",
+  "icon": "icon.svg",
+  "homepage": "https://api-docs.deepseek.com/guides/thinking_mode/",
+  "language": {
+    "auto": "Auto",
+    "zh_cn": "Simplified Chinese",
+    "zh_tw": "Traditional Chinese",
+    "yue": "Cantonese",
+    "ja": "Japanese",
+    "en": "English",
+    "ko": "Korean",
+    "fr": "French",
+    "es": "Spanish",
+    "ru": "Russian",
+    "de": "German",
+    "it": "Italian",
+    "tr": "Turkish",
+    "pt_pt": "Portuguese",
+    "pt_br": "Brazilian Portuguese",
+    "vi": "Vietnamese",
+    "id": "Indonesian",
+    "th": "Thai",
+    "ms": "Malay",
+    "ar": "Arabic",
+    "hi": "Hindi",
+    "km": "Khmer",
+    "fa": "Persian",
+    "sv": "Swedish",
+    "pl": "Polish",
+    "nl": "Dutch",
+    "uk": "Ukrainian",
+    "he": "Hebrew"
+  },
+  "needs": [
+    {
+      "key": "apiKey",
+      "display": "API Key",
+      "type": "input"
+    },
+    {
+      "key": "model",
+      "display": "Model",
+      "type": "input"
+    },
+    {
+      "key": "prompt",
+      "display": "Prompt",
+      "type": "input"
+    },
+    {
+      "key": "extraArguments",
+      "display": "Extra JSON Arguments",
+      "type": "input"
+    }
+  ],
+  "options": [
+    {
+      "key": "baseUrl",
+      "display": "Base URL",
+      "type": "input",
+      "default": "https://api.deepseek.com/chat/completions"
+    },
+    {
+      "key": "defaultModel",
+      "display": "Default Model",
+      "type": "input",
+      "default": "deepseek-flash"
+    },
+    {
+      "key": "thinking",
+      "display": "Thinking Mode",
+      "type": "select",
+      "default": "default",
+      "options": {
+        "default": "Default",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      }
+    },
+    {
+      "key": "reasoningEffort",
+      "display": "Reasoning Effort",
+      "type": "select",
+      "default": "default",
+      "options": {
+        "default": "Default",
+        "low": "low",
+        "high": "high",
+        "max": "max"
+      }
+    }
+  ],
+  "hotkeys": [
+    {
+      "key": "open_homepage",
+      "display": "Open Homepage",
+      "default": "",
+      "handler": "openHomepage"
+    }
+  ]
+}

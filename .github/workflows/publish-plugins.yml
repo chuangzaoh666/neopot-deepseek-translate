@@ -1,0 +1,37 @@
+name: Publish plugins
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Package plugins
+        run: node scripts/pack-plugins.mjs
+
+      - name: Publish plugin release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view plugins >/dev/null 2>&1; then
+            gh release upload plugins dist/plugins/*.zip --clobber
+          else
+            gh release create plugins dist/plugins/*.zip \
+              --title "NeoPot Plugin Marketplace" \
+              --notes "Installable plugin packages for NeoPot." \
+              --latest=false
+          fi
+

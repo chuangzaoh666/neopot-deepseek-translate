@@ -1,0 +1,13 @@
+[
+  {
+    "id": "translate:plugin-deepseek-translate",
+    "type": "translate",
+    "name": "plugin-deepseek-translate",
+    "display": "DeepSeek Translate",
+    "version": "0.1.0",
+    "author": "chuangzaoh666",
+    "description": "Translate text with the DeepSeek OpenAI-compatible Chat Completions API (DeepSeek V4.1 Flash), with configurable thinking mode.",
+    "repo": "https://github.com/chuangzaoh666/neopot-deepseek-translate",
+    "download": "https://github.com/chuangzaoh666/neopot-deepseek-translate/releases/download/plugins/plugin-deepseek-translate.zip"
+  }
+]

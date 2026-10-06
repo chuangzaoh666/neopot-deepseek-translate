@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="DeepSeek Translate">
+  <rect width="64" height="64" rx="12" fill="#4d6bfe" />
+  <path d="M12 22h22v6H12zM12 32h16v6H12zM12 42h22v6H12z" fill="#fff" opacity="0.92" />
+  <circle cx="47" cy="35" r="9" fill="#fff" />
+  <path d="M43 35l3 3 6-6" fill="none" stroke="#4d6bfe" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
