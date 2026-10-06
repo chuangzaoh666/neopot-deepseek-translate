@@ -4,6 +4,7 @@
 
 - 提示词参考 [Tzulao55/pot-app-translate-plugin-deepseek](https://github.com/Tzulao55/pot-app-translate-plugin-deepseek)。
 - 仓库格式参考 [shirumesu/Neopot-releases](https://github.com/shirumesu/Neopot-releases)。
+- 遇到「保存设置失败 / Secret encryption is unavailable」，见文末[注意事项](#注意事项)。
 
 ## 关于模型
 
@@ -75,6 +76,43 @@ node scripts/pack-plugins.mjs
 打包发布后可把 `marketplace-plugins.json` 的原始地址加入 NeoPot 的插件市场源：
 `https://raw.githubusercontent.com/chuangzaoh666/neopot-deepseek-translate/main/marketplace-plugins.json`
 
+## 注意事项
+
+### 保存 API 密钥失败（Secret encryption is unavailable）
+
+现象：填入 API Key 点保存时提示保存失败，日志 `~/.config/NeoPot/logs/main.log` 报：
+
+```
+Secret encryption is unavailable on this system.
+```
+
+原因：NeoPot 会对键名含 `apikey`、`api_key`、`token`、`password`、`secret_key` 等片段的配置项用 Electron `safeStorage` 加密。在非 GNOME/KDE 桌面（如 niri、Hyprland 等），`XDG_CURRENT_DESKTOP` 不被 Chromium 识别，会选到 `basic_text` 后端，`safeStorage.isEncryptionAvailable()` 返回 `false`，导致保存整体失败。这不是本插件的问题，任何使用 `apiKey` 字段的 NeoPot 插件都会遇到。
+
+解决：启动 NeoPot 时加 `--password-store=gnome-libsecret`（需要 gnome-keyring 正在运行且已解锁）：
+
+```
+~/.local/opt/neopot/AppRun --no-sandbox --password-store=gnome-libsecret
+```
+
+用 `.desktop` 启动时，把该参数写进 `Exec=` 行；用脚本/命令行启动同理。修改后需要重启 NeoPot 才生效。
+
+自检方法（Electron 的桌面环境判断）：正常时应为 `gnome_libsecret` 且加解密可用：
+
+```js
+const { app, safeStorage } = require('electron')
+app.whenReady().then(() => {
+  console.log(safeStorage.getSelectedStorageBackend(), safeStorage.isEncryptionAvailable())
+  app.quit()
+})
+```
+
+### 其他
+
+- 保存成功后，API Key 由 gnome-keyring 加密存储，仓库与配置文件中不含明文密钥。
+- 请求固定 `max_tokens=2000`，翻译超长文本时可能被截断。
+- 默认「思考模式=开启」会消耗推理 token（按输出计费），对成本敏感可在插件页设为「关闭」。
+- 若直接运行原始 `neopot.appimage` 而不走 `AppRun`，同样需要自行加上 `--password-store=gnome-libsecret`。
+
 ## 备注
 
 - 本仓库不包含任何 API Key。
@@ -82,4 +120,4 @@ node scripts/pack-plugins.mjs
 
 ## License
 
-GPL-3.0
+MIT
