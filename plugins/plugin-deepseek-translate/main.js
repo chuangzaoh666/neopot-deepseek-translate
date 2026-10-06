@@ -2,7 +2,7 @@
 // Uses the DeepSeek OpenAI-compatible Chat Completions API.
 // The model is fixed to "deepseek-flash" (DeepSeek routes its model requests to V4.1),
 // so there is no model selection in the config page.
-// Thinking mode is left at the provider default (thinking enabled, reasoning effort "high").
+// Default thinking mode: enabled, reasoning effort: provider default (high).
 
 function getConfig(options) {
   return options && options.config ? options.config : {};
@@ -67,11 +67,6 @@ function resolveEndpoint(baseUrl) {
   return stripTrailingSlash(url) + '/chat/completions';
 }
 
-function parseMaybeJson(value, fallback) {
-  if (!value) return fallback;
-  try { return JSON.parse(value); } catch { return fallback; }
-}
-
 function stripQuotedResult(value) {
   let text = String(value || '').trim();
   if ((text.startsWith('"') && text.endsWith('"')) || (text.startsWith("'") && text.endsWith("'"))) text = text.slice(1, -1);
@@ -84,26 +79,17 @@ const MODEL = 'deepseek-flash';
 // Prompt from Tzulao55/pot-app-translate-plugin-deepseek: translate only, never interpret.
 const DEFAULT_SYSTEM_PROMPT = 'You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation. You must only translate the text content, never interpret it.';
 
-function buildMessages(text, from, to, detect, customPrompt) {
-  const source = !from || from === 'auto' ? (detect || 'auto') : from;
-  const system = DEFAULT_SYSTEM_PROMPT;
-  const template = customPrompt && String(customPrompt).trim() ? String(customPrompt) : '';
-  if (!template) {
-    return [{ role: 'system', content: system }, { role: 'user', content: 'Translate into ' + (to || '') + ':\n' + text }];
-  }
-  let user = template
-    .replaceAll('$text', text)
-    .replaceAll('$from', source)
-    .replaceAll('$to', to || '')
-    .replaceAll('$detect', detect || source);
-  if (!template.includes('$text')) user = user + '\n\n' + text;
-  return [{ role: 'system', content: system }, { role: 'user', content: user }];
+function buildMessages(text, to) {
+  return [
+    { role: 'system', content: DEFAULT_SYSTEM_PROMPT },
+    { role: 'user', content: 'Translate into ' + (to || '') + ':\n' + text },
+  ];
 }
 
-// "default" leaves the parameters out so the provider default applies
-// (thinking enabled, reasoning effort "high").
+// Default is "enabled" (explicit thinking on); effort "default" leaves reasoning_effort
+// out so the provider default ("high") applies.
 function applyThinking(payload, pluginOptions) {
-  const thinking = String(pluginOptions.thinking || 'default').toLowerCase();
+  const thinking = String(pluginOptions.thinking || 'enabled').toLowerCase();
   const effort = String(pluginOptions.reasoningEffort || 'default').toLowerCase();
   if (thinking === 'enabled') payload.thinking = { type: 'enabled' };
   else if (thinking === 'disabled') payload.thinking = { type: 'disabled' };
@@ -116,16 +102,16 @@ async function translate(text, from, to, options = {}) {
   const pluginOptions = getPluginOptions(options);
   const apiKey = requireValue(config.apiKey, 'API 密钥');
   const endpoint = resolveEndpoint(pluginOptions.baseUrl);
-  const payload = Object.assign({
+  const payload = {
     model: MODEL,
-    messages: buildMessages(text, from, to, options.detect, config.prompt),
+    messages: buildMessages(text, to),
     stream: false,
     temperature: 0.1,
     top_p: 0.99,
     frequency_penalty: 0,
     presence_penalty: 0,
     max_tokens: 2000,
-  }, parseMaybeJson(config.extraArguments, {}));
+  };
   applyThinking(payload, pluginOptions);
 
   const headers = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey };

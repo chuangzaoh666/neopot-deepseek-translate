@@ -2,7 +2,7 @@
   "plugin_type": "translate",
   "name": "plugin-deepseek-translate",
   "display": "DeepSeek 翻译",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "chuangzaoh666",
   "description": "使用 DeepSeek 官方 OpenAI 兼容接口进行翻译，只输出译文。模型固定为 deepseek-flash。",
   "icon": "icon.svg",
@@ -42,16 +42,6 @@
       "key": "apiKey",
       "display": "API 密钥",
       "type": "input"
-    },
-    {
-      "key": "prompt",
-      "display": "提示词",
-      "type": "input"
-    },
-    {
-      "key": "extraArguments",
-      "display": "额外 JSON 参数",
-      "type": "input"
     }
   ],
   "options": [
@@ -65,7 +55,7 @@
       "key": "thinking",
       "display": "思考模式",
       "type": "select",
-      "default": "default",
+      "default": "enabled",
       "options": {
         "default": "默认",
         "enabled": "开启",

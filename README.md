@@ -34,15 +34,15 @@ scripts/pack-plugins.mjs   # 打包为 dist/plugins/*.zip
 | 字段 | 说明 |
 | --- | --- |
 | API 密钥 | 必填，DeepSeek 平台 API Key（`sk-...`） |
-| 提示词 | 可选，自定义用户消息模板，支持 `$text` `$from` `$to` `$detect` 占位符；未写 `$text` 时自动追加原文。留空使用内置模板 `Translate into <目标语言>:\n<原文>` |
-| 额外 JSON 参数 | 可选，直接合并进请求体的额外参数，例如 `{"max_tokens":4096}` |
+
+只有一个必填项。提示词与额外请求参数已固定写死在代码里（NeoPot 的可选输入框留空时无法保存，故不提供）。
 
 ### 插件级配置
 
 | 字段 | 默认值 | 说明 |
 | --- | --- | --- |
 | 接口地址 | `https://api.deepseek.com/chat/completions` | 可填完整端点、基址或 `/v1` 基址 |
-| 思考模式 | 默认 | 默认 / 开启 / 关闭 |
+| 思考模式 | 开启 | 默认 / 开启 / 关闭 |
 | 推理强度 | 默认 | 默认 / 低 / 高 / 最高 |
 
 ### 内置提示词与请求参数
@@ -53,12 +53,14 @@ scripts/pack-plugins.mjs   # 打包为 dist/plugins/*.zip
 You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation. You must only translate the text content, never interpret it.
 ```
 
-默认请求参数：`temperature=0.1`、`top_p=0.99`、`frequency_penalty=0`、`presence_penalty=0`、`max_tokens=2000`，可用「额外 JSON 参数」覆盖。
+用户消息：`Translate into <目标语言>:\n<原文>`
+
+请求参数：`temperature=0.1`、`top_p=0.99`、`frequency_penalty=0`、`presence_penalty=0`、`max_tokens=2000`。
 
 ### 关于思考模式
 
-- `思考模式 = 默认` 且 `推理强度 = 默认` 时，请求体不携带 `thinking` / `reasoning_effort`，即使用 DeepSeek 官方默认：**思考开启，effort = high**。
-- `开启` 会显式发送 `"thinking": {"type": "enabled"}`；`关闭` 会发送 `"thinking": {"type": "disabled"}` 并去掉 `reasoning_effort`。
+- 默认 `思考模式 = 开启`、`推理强度 = 默认`：请求携带 `"thinking": {"type": "enabled"}`，不携带 `reasoning_effort`，即 effort 用官方默认 `high`。
+- `关闭` 会发送 `"thinking": {"type": "disabled"}` 并去掉 `reasoning_effort`。
 - 指定推理强度时发送 `reasoning_effort`（仅暴露 `low`/`high`/`max`）。
 - 思考模式下 `temperature`、`presence_penalty`、`frequency_penalty` 会被忽略（不报错），`top_p` 有效范围为 0.95–1.0。
 
