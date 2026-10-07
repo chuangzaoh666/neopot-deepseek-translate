@@ -2,7 +2,7 @@
   "plugin_type": "translate",
   "name": "plugin-deepseek-translate",
   "display": "DeepSeek 翻译",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "author": "chuangzaoh666",
   "description": "使用 DeepSeek 官方 OpenAI 兼容接口进行翻译，只输出译文。模型固定为 deepseek-flash。",
   "icon": "icon.svg",
@@ -42,6 +42,27 @@
       "key": "apiKey",
       "display": "API 密钥",
       "type": "input"
+    },
+    {
+      "key": "thinking",
+      "display": "思考模式",
+      "type": "select",
+      "options": {
+        "disabled": "关闭",
+        "enabled": "开启",
+        "default": "默认"
+      }
+    },
+    {
+      "key": "reasoningEffort",
+      "display": "推理强度",
+      "type": "select",
+      "options": {
+        "default": "默认",
+        "low": "低",
+        "high": "高",
+        "max": "最高"
+      }
     }
   ],
   "options": [
@@ -50,29 +71,6 @@
       "display": "接口地址",
       "type": "input",
       "default": "https://api.deepseek.com/chat/completions"
-    },
-    {
-      "key": "thinking",
-      "display": "思考模式",
-      "type": "select",
-      "default": "enabled",
-      "options": {
-        "default": "默认",
-        "enabled": "开启",
-        "disabled": "关闭"
-      }
-    },
-    {
-      "key": "reasoningEffort",
-      "display": "推理强度",
-      "type": "select",
-      "default": "default",
-      "options": {
-        "default": "默认",
-        "low": "低",
-        "high": "高",
-        "max": "最高"
-      }
     }
   ],
   "hotkeys": [

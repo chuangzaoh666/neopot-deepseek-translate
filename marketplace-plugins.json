@@ -4,7 +4,7 @@
     "type": "translate",
     "name": "plugin-deepseek-translate",
     "display": "DeepSeek 翻译",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "author": "chuangzaoh666",
     "description": "使用 DeepSeek 官方 OpenAI 兼容接口进行翻译，只输出译文。模型固定为 deepseek-flash。",
     "repo": "https://github.com/chuangzaoh666/neopot-deepseek-translate",

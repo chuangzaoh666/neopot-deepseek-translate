@@ -32,19 +32,19 @@ scripts/pack-plugins.mjs   # 打包为 dist/plugins/*.zip
 
 ### 服务实例配置
 
-| 字段 | 说明 |
-| --- | --- |
-| API 密钥 | 必填，DeepSeek 平台 API Key（`sk-...`） |
+| 字段 | 默认值 | 说明 |
+| --- | --- | --- |
+| API 密钥 | — | 必填，DeepSeek 平台 API Key（`sk-...`） |
+| 思考模式 | 关闭 | 关闭 / 开启 / 默认 |
+| 推理强度 | 默认 | 默认 / 低 / 高 / 最高 |
 
-只有一个必填项。提示词与额外请求参数已固定写死在代码里（NeoPot 的可选输入框留空时无法保存，故不提供）。
+说明：NeoPot 的服务页下拉以选项对象**第一个键**作为显示默认值（不使用 `default` 字段），且不点开下拉不会写入配置，所以默认值同时由插件代码兜底为「思考模式=关闭、推理强度=默认」。提示词与额外请求参数已固定写死在代码里（NeoPot 的可选输入框留空时无法保存，故不提供）。
 
 ### 插件级配置
 
 | 字段 | 默认值 | 说明 |
 | --- | --- | --- |
 | 接口地址 | `https://api.deepseek.com/chat/completions` | 可填完整端点、基址或 `/v1` 基址 |
-| 思考模式 | 开启 | 默认 / 开启 / 关闭 |
-| 推理强度 | 默认 | 默认 / 低 / 高 / 最高 |
 
 ### 内置提示词与请求参数
 
@@ -60,8 +60,8 @@ You are a professional translation engine, please translate the text into a coll
 
 ### 关于思考模式
 
-- 默认 `思考模式 = 开启`、`推理强度 = 默认`：请求携带 `"thinking": {"type": "enabled"}`，不携带 `reasoning_effort`，即 effort 用官方默认 `high`。
-- `关闭` 会发送 `"thinking": {"type": "disabled"}` 并去掉 `reasoning_effort`。
+- 默认 `思考模式 = 关闭`、`推理强度 = 默认`：请求携带 `"thinking": {"type": "disabled"}`，不发送 `reasoning_effort`（非思考模式，最省 token）。
+- 选 `开启` 时发送 `"thinking": {"type": "enabled"}`；`推理强度 = 默认` 时不发送 `reasoning_effort`，用官方默认 `high`。
 - 指定推理强度时发送 `reasoning_effort`（仅暴露 `low`/`high`/`max`）。
 - 思考模式下 `temperature`、`presence_penalty`、`frequency_penalty` 会被忽略（不报错），`top_p` 有效范围为 0.95–1.0。
 
@@ -110,7 +110,7 @@ app.whenReady().then(() => {
 
 - 保存成功后，API Key 由 gnome-keyring 加密存储，仓库与配置文件中不含明文密钥。
 - 请求固定 `max_tokens=2000`，翻译超长文本时可能被截断。
-- 默认「思考模式=开启」会消耗推理 token（按输出计费），对成本敏感可在插件页设为「关闭」。
+- 默认「思考模式=关闭」（服务页可选），开启后会消耗推理 token（按输出计费）。
 - 若直接运行原始 `neopot.appimage` 而不走 `AppRun`，同样需要自行加上 `--password-store=gnome-libsecret`。
 
 ## 来源与致谢

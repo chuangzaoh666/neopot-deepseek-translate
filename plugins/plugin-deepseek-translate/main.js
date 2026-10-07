@@ -3,7 +3,8 @@
 // Uses the DeepSeek OpenAI-compatible Chat Completions API.
 // The model is fixed to "deepseek-flash" (DeepSeek routes its model requests to V4.1),
 // so there is no model selection in the config page.
-// Default thinking mode: enabled, reasoning effort: provider default (high).
+// Default thinking mode: disabled. Thinking mode and reasoning effort are per-service
+// options on the NeoPot service config page.
 
 function getConfig(options) {
   return options && options.config ? options.config : {};
@@ -87,11 +88,12 @@ function buildMessages(text, to) {
   ];
 }
 
-// Default is "enabled" (explicit thinking on); effort "default" leaves reasoning_effort
-// out so the provider default ("high") applies.
-function applyThinking(payload, pluginOptions) {
-  const thinking = String(pluginOptions.thinking || 'enabled').toLowerCase();
-  const effort = String(pluginOptions.reasoningEffort || 'default').toLowerCase();
+// Service-level options (NeoPot service config page, manifest "needs").
+// Default is "disabled"; effort "default" leaves reasoning_effort out so the provider
+// default ("high") applies when thinking is enabled.
+function applyThinking(payload, config) {
+  const thinking = String(config.thinking || 'disabled').toLowerCase();
+  const effort = String(config.reasoningEffort || 'default').toLowerCase();
   if (thinking === 'enabled') payload.thinking = { type: 'enabled' };
   else if (thinking === 'disabled') payload.thinking = { type: 'disabled' };
   if (effort !== 'default' && effort !== '') payload.reasoning_effort = effort;
@@ -113,7 +115,7 @@ async function translate(text, from, to, options = {}) {
     presence_penalty: 0,
     max_tokens: 2000,
   };
-  applyThinking(payload, pluginOptions);
+  applyThinking(payload, config);
 
   const headers = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey };
   const res = await request(options, endpoint, { method: 'POST', headers: headers, body: jsonBody(options, payload) });
